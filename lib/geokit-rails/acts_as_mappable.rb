@@ -117,10 +117,12 @@ module Geokit
 
       def within(distance, options = {})
         options[:within] = distance
+        point = options[:origin]
         # Add bounding box to speed up SQL request.
+        # normalize_point_to_lat_lng(options[:origin]),
         bounds = formulate_bounds_from_distance(
           options,
-          normalize_point_to_lat_lng(options[:origin]),
+          Geokit::LatLng.new(point[0],point[1]),
           options[:units] || default_units)
         with_latlng.where(bound_conditions(bounds)).
           where(distance_conditions(options))
@@ -330,8 +332,8 @@ module Geokit
       # method adds on top of LatLng#normalize is handling of IP addresses
       def normalize_point_to_lat_lng(point)
         res = geocode_ip_address(point) if point.is_a?(String) && /^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})?$/.match(point)
-        # res = Geokit::LatLng.normalize(point) unless res
-        res = Geokit::LatLng.new(point) unless res
+        res = Geokit::LatLng.normalize(point) unless res
+        # res = Geokit::LatLng.new(point[0],point[1]) unless res
         res
       end
 
