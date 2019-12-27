@@ -330,7 +330,8 @@ module Geokit
       # method adds on top of LatLng#normalize is handling of IP addresses
       def normalize_point_to_lat_lng(point)
         res = geocode_ip_address(point) if point.is_a?(String) && /^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})?$/.match(point)
-        res = Geokit::LatLng.normalize(point) unless res
+        # res = Geokit::LatLng.normalize(point) unless res
+        res = Geokit::LatLng.new(point) unless res
         res
       end
 
